@@ -1,20 +1,24 @@
 /*
- * Copyright 2020 KT AI Lab.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
+Copyright (c) 2019 KT corp.
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 // test_sample.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
@@ -423,10 +427,15 @@ THREAD_RET_TYPE THREAD_CALLING_CONVENTION KwsThread(void *arg)
                     ret = kws_detect(test, buffer_frames);
                     if(ret == KWS_DET_DETECTED) {
                         printf("> kws detected !!!\n");
-                        // a. 호출어가 인식되면 재생 중인 미디어를 종료 또는 일시정지 한 후 필요에 따라 호출어 인식을 알리는 음원 등을 재생한다.
-                        // b. 호출어 인식 알림음을 재생하는 경우에는 알림음 재생이 완료된 후 agent_stratVoice()를 호출하여 음성인식 시작을 요청한다.
-                        g_start_kws = 0;
-                        agent_startVoice();  
+                        // TODO : agent_init()을 통해 uuid 정보를 정상적으로 발급받은 상태에서 호출어 인식 후 음성인식 절차를 진행할 수 있다.     
+                        if(!isInit) {
+                            printf("can't start voice recognition. call agent_init first!\n");
+                        } else {
+                            // a. 호출어가 인식되면 재생 중인 미디어를 종료 또는 일시정지 한 후 필요에 따라 호출어 인식을 알리는 음원 등을 재생한다.
+                            // b. 호출어 인식 알림음을 재생하는 경우에는 알림음 재생이 완료된 후 agent_stratVoice()를 호출하여 음성인식 시작을 요청한다.
+                            g_start_kws = 0;
+                            agent_startVoice();
+                        }
                     }
                 }
             }
@@ -947,11 +956,11 @@ void onEvent(int eventMask, std::string opt) {
 }
 
 int test_kws_init() {
-    // TODO : agent_init()을 통해 uuid 정보를 정상적으로 발급받은 상태에서 kws_init()이 호출되어야 한다.     
-    if(!isInit) {
-        printf("kws_init failed. call agent_init first!\n");
-        return -1;
-    }
+//    // TODO : agent_init()을 통해 uuid 정보를 정상적으로 발급받은 상태에서 kws_init()이 호출되어야 한다.     
+//    if(!isInit) {
+//        printf("kws_init failed. call agent_init first!\n");
+//        return -1;
+//    }
 
     if(!isKwsInit) {
         // TODO : 호출어 모델 파일 경로가 "./conf/x.cnsf" 아닌 경우 경로를 지정해 주어야 한다.
@@ -1102,6 +1111,8 @@ int main()
                 return 0;
             }
         }
+    } else {
+        need_register = true;
     }
     
     rc.rc = 0;
