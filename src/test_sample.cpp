@@ -455,14 +455,14 @@ THREAD_RET_TYPE THREAD_CALLING_CONVENTION MicThread(void *arg)
 {
     char *buffer;
     int err = 0;
-    int buffer_frames = 160; //frame size , 1/100 sec 
+    int buffer_frames = 640; //frame size 
     unsigned int rate = 16000;//16K;
     snd_pcm_t *capture_handle;
     snd_pcm_hw_params_t *hw_params;
     snd_pcm_format_t format = SND_PCM_FORMAT_S16_LE; //16bit Little endian
     int rc;
 
-    short test[320];
+    short test[1280];
     int i=0, j=0;
     int chunk_size = 0;
     
@@ -531,7 +531,7 @@ THREAD_RET_TYPE THREAD_CALLING_CONVENTION MicThread(void *arg)
                 fprintf(stderr, "short read, read %d frames\n", rc);
             } else {
                 // TODO : char형 데이터를 short형 데이터로 변환한다.
-                memset(test, 0, 320);
+                memset(test, 0, 1280);
                 j = 0;
                 for(i=0 ; i<chunk_size ; i=i+2 ) {
                     test[j] = (short)(((buffer[i+1] & 0xff) << 8) | (buffer[i] & 0xff));
